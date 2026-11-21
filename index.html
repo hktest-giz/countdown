@@ -281,6 +281,167 @@
       line-height: 1.6;
     }
 
+    .side-stack {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.4vw, 16px);
+    }
+    .tasks-panel { flex: 1 1 auto; }
+    .calendar-panel {
+      flex: 0 0 auto;
+      min-width: 0;
+      padding: 17px clamp(14px, 1.8vw, 21px) 14px;
+    }
+    .calendar-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .calendar-heading h2 {
+      margin: 0;
+      color: #f0f0f0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .13em;
+    }
+    .calendar-nav { display: flex; align-items: center; gap: 7px; }
+    .calendar-month {
+      min-width: 88px;
+      color: #d8d8d8;
+      font-size: 12px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .month-button {
+      width: 25px;
+      height: 25px;
+      padding: 0;
+      border: 1px solid #303030;
+      border-radius: 7px;
+      background: #111;
+      color: #cfcfcf;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .month-button:hover { background: #242424; color: #fff; }
+    .calendar-weekdays, .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 3px;
+    }
+    .calendar-weekdays { margin-bottom: 5px; }
+    .calendar-weekdays span {
+      color: #666;
+      font-size: 10px;
+      line-height: 20px;
+      text-align: center;
+    }
+    .calendar-day {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      min-height: 29px;
+      padding: 4px 0 6px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: #c7c7c7;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+    }
+    .calendar-day:hover { background: #202020; }
+    .calendar-day.today { border-color: #626262; color: #fff; }
+    .calendar-day.selected { background: #f2f2f2; color: #080808; font-weight: 700; }
+    .calendar-day .day-dot {
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #aaa;
+      transform: translateX(-50%);
+    }
+    .calendar-day.selected .day-dot { background: #111; }
+    .calendar-day.today.selected { border-color: #f2f2f2; }
+    .selected-date {
+      margin-top: 10px;
+      color: #a9a9a9;
+      font-size: 11px;
+    }
+    .calendar-form { display: flex; gap: 6px; margin-top: 8px; }
+    .calendar-input {
+      min-width: 0;
+      flex: 1;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: none;
+      background: #080808;
+      color: var(--text);
+      font-size: 11px;
+    }
+    .calendar-input::placeholder { color: #666; }
+    .calendar-input:focus { border-color: #777; }
+    .calendar-add {
+      width: 34px;
+      min-width: 34px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background: #f2f2f2;
+      color: #080808;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .calendar-events { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }
+    .calendar-event {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      padding: 5px 1px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .calendar-event::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      flex: 0 0 4px;
+      border-radius: 50%;
+      background: #aaa;
+    }
+    .calendar-event-text {
+      min-width: 0;
+      flex: 1;
+      color: #d2d2d2;
+      font-size: 11px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+    .calendar-event-delete {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: #666;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .calendar-event-delete:hover { color: #fff; background: #222; }
+    .calendar-empty { padding: 7px 1px 2px; color: #626262; font-size: 10px; }
+    .calendar-help { margin: 8px 0 0; color: #555; font-size: 9px; line-height: 1.4; }
+
     /* 작은 태블릿과 휴대폰: 좁은 두 칸 대신 위아래로 배치 */
     @media (max-width: 760px) {
       .app { padding: 17px 14px max(20px, env(safe-area-inset-bottom)); }
@@ -296,8 +457,11 @@
       }
       .countdown { font-size: clamp(46px, 12.5vw, 78px); }
       .bedtime-control { margin-top: clamp(22px, 4vh, 34px); }
+      .side-stack { gap: 12px; }
       .tasks-panel { min-height: 230px; padding: 20px 18px 18px; }
       .task-form { margin-top: 14px; }
+      .calendar-panel { padding: 18px 18px 14px; }
+      .calendar-day { min-height: 34px; font-size: 12px; }
     }
 
     /* 작은 휴대폰 */
@@ -307,6 +471,8 @@
       .countdown { font-size: clamp(40px, 12.2vw, 47px); letter-spacing: -.07em; }
       .bedtime-control { gap: 9px; padding: 10px 12px; }
       .tasks-panel { padding: 18px 14px 16px; }
+      .calendar-panel { padding: 16px 14px 13px; }
+      .calendar-day { min-height: 32px; }
       .task-input { padding: 11px 10px; }
     }
 
@@ -355,17 +521,41 @@
         <div class="hint" id="bedtimeHint">취침 시간을 바꾸면 카운트다운에 바로 반영돼요.</div>
       </section>
 
-      <aside class="panel tasks-panel" aria-label="오늘의 할 일">
-        <div class="tasks-heading">
-          <h1>TODAY'S TASKS</h1>
-          <span class="task-count" id="taskCount">0 / 0</span>
-        </div>
-        <form class="task-form" id="taskForm">
-          <input class="task-input" id="taskInput" type="text" maxlength="100" placeholder="할 일을 입력해 주세요" autocomplete="off" aria-label="새 할 일" />
-          <button class="add-button" type="submit" aria-label="할 일 추가">+</button>
-        </form>
-        <div class="task-list" id="taskList"></div>
-        <div class="bottom-note">오늘 할 일을 적고, 하나씩 완료해 보세요.</div>
+      <aside class="side-stack" aria-label="하루 계획">
+        <section class="panel tasks-panel" aria-label="계속 유지되는 할 일 목록">
+          <div class="tasks-heading">
+            <h1>TASKS</h1>
+            <span class="task-count" id="taskCount">0 / 0</span>
+          </div>
+          <form class="task-form" id="taskForm">
+            <input class="task-input" id="taskInput" type="text" maxlength="100" placeholder="할 일을 입력해 주세요" autocomplete="off" aria-label="새 할 일" />
+            <button class="add-button" type="submit" aria-label="할 일 추가">+</button>
+          </form>
+          <div class="task-list" id="taskList"></div>
+          <div class="bottom-note">할 일을 적고, 하나씩 완료해 보세요.</div>
+        </section>
+
+        <section class="panel calendar-panel" aria-label="날짜별 메모 달력">
+          <div class="calendar-heading">
+            <h2>CALENDAR</h2>
+            <div class="calendar-nav">
+              <button class="month-button" id="prevMonth" type="button" aria-label="이전 달">‹</button>
+              <span class="calendar-month" id="calendarMonth"></span>
+              <button class="month-button" id="nextMonth" type="button" aria-label="다음 달">›</button>
+            </div>
+          </div>
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid" aria-label="날짜 선택"></div>
+          <div class="selected-date" id="selectedDateLabel"></div>
+          <form class="calendar-form" id="calendarForm">
+            <input class="calendar-input" id="calendarInput" type="text" maxlength="80" placeholder="선택한 날짜에 표시할 내용" autocomplete="off" aria-label="선택한 날짜의 일정 또는 메모" />
+            <button class="calendar-add" type="submit" aria-label="달력에 표시 추가">+</button>
+          </form>
+          <div class="calendar-events" id="calendarEvents"></div>
+          <p class="calendar-help">내용이 있는 날짜에는 작은 점이 표시돼요.</p>
+        </section>
       </aside>
     </section>
   </main>
@@ -373,7 +563,10 @@
   <script>
     (() => {
       const BEDTIME_KEY = 'my-day-countdown-bedtime-v1';
-      const TASKS_PREFIX = 'my-day-countdown-tasks-';
+      // 날짜와 무관하게 하나의 할 일 목록을 계속 사용합니다.
+      const TASKS_KEY = 'my-day-countdown-tasks-v2';
+      // 이전 버전의 날짜별 목록을 새 목록으로 옮기기 위한 키 접두사입니다.
+      const LEGACY_TASKS_PREFIX = 'my-day-countdown-tasks-';
       const bedtimeInput = document.getElementById('bedtimeInput');
       const countdownEl = document.getElementById('countdown');
       const dateLabel = document.getElementById('dateLabel');
@@ -382,38 +575,203 @@
       const taskInput = document.getElementById('taskInput');
       const taskList = document.getElementById('taskList');
       const taskCount = document.getElementById('taskCount');
+      const calendarMonthEl = document.getElementById('calendarMonth');
+      const calendarGrid = document.getElementById('calendarGrid');
+      const selectedDateLabel = document.getElementById('selectedDateLabel');
+      const calendarForm = document.getElementById('calendarForm');
+      const calendarInput = document.getElementById('calendarInput');
+      const calendarEventsEl = document.getElementById('calendarEvents');
+      const prevMonthButton = document.getElementById('prevMonth');
+      const nextMonthButton = document.getElementById('nextMonth');
+      const CALENDAR_KEY = 'my-day-countdown-calendar-v1';
 
-      let activeDayKey = getDayKey(new Date());
-      let tasks = loadTasks(activeDayKey);
+      let tasks = loadPersistentTasks();
+      const nowForCalendar = new Date();
+      let selectedDate = new Date(nowForCalendar.getFullYear(), nowForCalendar.getMonth(), nowForCalendar.getDate());
+      let visibleMonth = new Date(nowForCalendar.getFullYear(), nowForCalendar.getMonth(), 1);
+      let calendarData = loadCalendarData();
 
       function safeGet(key) {
         try { return localStorage.getItem(key); } catch (_) { return null; }
       }
       function safeSet(key, value) {
-        try { localStorage.setItem(key, value); } catch (_) { /* 저장 공간을 사용할 수 없는 환경에서는 현재 화면에서만 동작 */ }
-      }
-      function getDayKey(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-      }
-      function formatDate(date) {
-        return new Intl.DateTimeFormat('ko-KR', {
-          weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit'
-        }).format(date);
-      }
-      function loadTasks(dayKey) {
-        const saved = safeGet(TASKS_PREFIX + dayKey);
-        if (!saved) return [];
         try {
-          const parsed = JSON.parse(saved);
-          return Array.isArray(parsed) ? parsed.filter(item => item && typeof item.text === 'string') : [];
-        } catch (_) { return []; }
+          localStorage.setItem(key, value);
+          return true;
+        } catch (_) {
+          // 저장 공간을 사용할 수 없는 환경에서는 현재 화면에서만 동작합니다.
+          return false;
+        }
+      }
+      function parseTasks(value) {
+        if (!value) return [];
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed)
+            ? parsed.filter(item => item && typeof item.text === 'string')
+                .map(item => ({
+                  id: String(item.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`),
+                  text: item.text,
+                  done: Boolean(item.done)
+                }))
+            : [];
+        } catch (_) {
+          return [];
+        }
+      }
+      function loadPersistentTasks() {
+        // 새 방식으로 이미 저장된 목록이 있으면 그대로 사용합니다.
+        const current = safeGet(TASKS_KEY);
+        if (current !== null) return parseTasks(current);
+
+        // 첫 실행 시 예전 버전의 날짜별 할 일을 한 목록으로 합칩니다.
+        const migrated = [];
+        const seenIds = new Set();
+        try {
+          const legacyEntries = [];
+          for (let i = 0; i < localStorage.length; i += 1) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(LEGACY_TASKS_PREFIX) && key !== TASKS_KEY) {
+              legacyEntries.push({ key, date: key.slice(LEGACY_TASKS_PREFIX.length) });
+            }
+          }
+          legacyEntries.sort((a, b) => a.date.localeCompare(b.date));
+          legacyEntries.forEach(({ key }) => {
+            parseTasks(safeGet(key)).forEach(task => {
+              if (!seenIds.has(task.id)) {
+                seenIds.add(task.id);
+                migrated.push(task);
+              }
+            });
+          });
+        } catch (_) {
+          // 브라우저가 저장소 접근을 제한하면 빈 목록으로 시작합니다.
+        }
+        safeSet(TASKS_KEY, JSON.stringify(migrated));
+        return migrated;
       }
       function saveTasks() {
-        safeSet(TASKS_PREFIX + activeDayKey, JSON.stringify(tasks));
+        safeSet(TASKS_KEY, JSON.stringify(tasks));
       }
+      function loadCalendarData() {
+        const saved = safeGet(CALENDAR_KEY);
+        if (!saved) return {};
+        try {
+          const parsed = JSON.parse(saved);
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+          const clean = {};
+          Object.entries(parsed).forEach(([dateKey, entries]) => {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey) || !Array.isArray(entries)) return;
+            clean[dateKey] = entries
+              .filter(entry => entry && typeof entry.text === 'string')
+              .map(entry => ({
+                id: String(entry.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`),
+                text: entry.text
+              }));
+          });
+          return clean;
+        } catch (_) {
+          return {};
+        }
+      }
+      function saveCalendarData() {
+        safeSet(CALENDAR_KEY, JSON.stringify(calendarData));
+      }
+      function dateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      function formatSelectedDate(date) {
+        return new Intl.DateTimeFormat('ko-KR', {
+          month: 'long', day: 'numeric', weekday: 'short'
+        }).format(date);
+      }
+      function renderCalendar() {
+        const year = visibleMonth.getFullYear();
+        const month = visibleMonth.getMonth();
+        calendarMonthEl.textContent = new Intl.DateTimeFormat('ko-KR', {
+          year: 'numeric', month: 'long'
+        }).format(visibleMonth);
+        calendarGrid.replaceChildren();
+
+        const firstWeekday = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let blank = 0; blank < firstWeekday; blank += 1) {
+          const spacer = document.createElement('span');
+          spacer.className = 'calendar-day-spacer';
+          spacer.setAttribute('aria-hidden', 'true');
+          calendarGrid.appendChild(spacer);
+        }
+
+        const todayKey = dateKey(new Date());
+        const selectedKey = dateKey(selectedDate);
+        for (let day = 1; day <= daysInMonth; day += 1) {
+          const date = new Date(year, month, day);
+          const key = dateKey(date);
+          const entries = calendarData[key] || [];
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'calendar-day';
+          if (key === todayKey) button.classList.add('today');
+          if (key === selectedKey) button.classList.add('selected');
+          button.textContent = String(day);
+          button.setAttribute('aria-label', `${formatSelectedDate(date)}${entries.length ? `, 표시 ${entries.length}개` : ''}`);
+          if (entries.length) {
+            const dot = document.createElement('span');
+            dot.className = 'day-dot';
+            dot.setAttribute('aria-hidden', 'true');
+            button.appendChild(dot);
+          }
+          button.addEventListener('click', () => {
+            selectedDate = date;
+            renderCalendar();
+            renderCalendarEvents();
+          });
+          calendarGrid.appendChild(button);
+        }
+        renderCalendarEvents();
+      }
+      function renderCalendarEvents() {
+        const key = dateKey(selectedDate);
+        selectedDateLabel.textContent = formatSelectedDate(selectedDate);
+        calendarEventsEl.replaceChildren();
+        const entries = calendarData[key] || [];
+        if (!entries.length) {
+          const empty = document.createElement('div');
+          empty.className = 'calendar-empty';
+          empty.textContent = '표시된 일정이 없어요.';
+          calendarEventsEl.appendChild(empty);
+          return;
+        }
+        entries.forEach(entry => {
+          const row = document.createElement('div');
+          row.className = 'calendar-event';
+          const text = document.createElement('span');
+          text.className = 'calendar-event-text';
+          text.textContent = entry.text;
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'calendar-event-delete';
+          remove.textContent = '×';
+          remove.setAttribute('aria-label', `${entry.text} 달력 표시 삭제`);
+          remove.addEventListener('click', () => {
+            calendarData[key] = (calendarData[key] || []).filter(item => item.id !== entry.id);
+            if (!calendarData[key].length) delete calendarData[key];
+            saveCalendarData();
+            renderCalendar();
+          });
+          row.append(text, remove);
+          calendarEventsEl.appendChild(row);
+        });
+      }
+      function changeVisibleMonth(offset) {
+        visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + offset, 1);
+        selectedDate = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
+        renderCalendar();
+      }
+
       function getNextBedtime(now) {
         const [hours, minutes] = (bedtimeInput.value || '23:30').split(':').map(Number);
         const target = new Date(now);
@@ -423,12 +781,7 @@
       }
       function updateCountdown() {
         const now = new Date();
-        const dayKey = getDayKey(now);
-        if (dayKey !== activeDayKey) {
-          activeDayKey = dayKey;
-          tasks = loadTasks(activeDayKey);
-          renderTasks();
-        }
+        // 날짜가 바뀌어도 할 일 목록은 초기화하거나 다시 불러오지 않습니다.
         dateLabel.textContent = formatDate(now);
         const remainingMs = Math.max(0, getNextBedtime(now).getTime() - now.getTime());
         const totalSeconds = Math.floor(remainingMs / 1000);
@@ -446,7 +799,7 @@
         if (tasks.length === 0) {
           const empty = document.createElement('div');
           empty.className = 'empty-state';
-          empty.textContent = '아직 등록된 할 일이 없어요.\n오늘 할 일을 하나 적어보세요.';
+          empty.textContent = '아직 등록된 할 일이 없어요.\n할 일을 하나 적어보세요.';
           taskList.appendChild(empty);
           return;
         }
@@ -511,7 +864,29 @@
         taskInput.focus();
       });
 
+      prevMonthButton.addEventListener('click', () => changeVisibleMonth(-1));
+      nextMonthButton.addEventListener('click', () => changeVisibleMonth(1));
+      calendarForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const text = calendarInput.value.trim();
+        if (!text) {
+          calendarInput.focus();
+          return;
+        }
+        const key = dateKey(selectedDate);
+        if (!calendarData[key]) calendarData[key] = [];
+        calendarData[key].push({
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          text
+        });
+        saveCalendarData();
+        calendarInput.value = '';
+        renderCalendar();
+        calendarInput.focus();
+      });
+
       renderTasks();
+      renderCalendar();
       updateCountdown();
       window.setInterval(updateCountdown, 250);
     })();
