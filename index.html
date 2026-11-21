@@ -688,6 +688,11 @@
           month: 'long', day: 'numeric', weekday: 'short'
         }).format(date);
       }
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('ko-KR', {
+          weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).format(date);
+      }
       function renderCalendar() {
         const year = visibleMonth.getFullYear();
         const month = visibleMonth.getMonth();

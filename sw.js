@@ -1,4 +1,4 @@
-const CACHE_NAME = 'my-day-countdown-v4';
+const CACHE_NAME = 'my-day-countdown-v5';
 const APP_FILES = [
   './',
   './index.html',
