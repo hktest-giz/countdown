@@ -105,9 +105,22 @@
       font-size: clamp(48px, min(9.2vw, 15vh), 116px);
       line-height: 1;
       font-weight: 350;
-      letter-spacing: -.075em;
+      letter-spacing: 0;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
+    }
+    /* 시·분·초는 같은 크기로, 콜론 양옆에 간격을 줍니다. */
+    .countdown-seconds {
+      display: inline-flex;
+      align-items: baseline;
+      margin-left: 0;
+      font-size: 1em;
+      letter-spacing: 0;
+      vertical-align: baseline;
+    }
+    .countdown-colon {
+      display: inline-block;
+      margin-inline: .14em;
     }
     .countdown-caption {
       color: #a0a0a0;
@@ -468,7 +481,7 @@
     @media (max-width: 380px) {
       .app { padding-right: 11px; padding-left: 11px; }
       .countdown-panel { min-height: 255px; padding: 24px 9px; }
-      .countdown { font-size: clamp(40px, 12.2vw, 47px); letter-spacing: -.07em; }
+      .countdown { font-size: clamp(40px, 12.2vw, 47px); letter-spacing: 0; }
       .bedtime-control { gap: 9px; padding: 10px 12px; }
       .tasks-panel { padding: 18px 14px 16px; }
       .calendar-panel { padding: 16px 14px 13px; }
@@ -510,8 +523,10 @@
 
     <section class="layout" aria-label="하루 관리">
       <section class="panel countdown-panel" aria-label="취침 카운트다운">
-        <div class="eyebrow">DAY COUNTDOWN</div>
-        <div class="countdown" id="countdown" role="timer" aria-live="off">-- : -- : --</div>
+        <div class="eyebrow">BEDTIME COUNTDOWN</div>
+        <div class="countdown" id="countdown" role="timer" aria-live="off">
+          <span id="countdownHours">--</span><span class="countdown-colon">:</span><span id="countdownMinutes">--</span><span class="countdown-seconds"><span class="countdown-colon">:</span><span id="countdownSeconds">--</span></span>
+        </div>
         <div class="countdown-caption">취침까지 남은 시간</div>
 
         <div class="bedtime-control">
@@ -569,6 +584,9 @@
       const LEGACY_TASKS_PREFIX = 'my-day-countdown-tasks-';
       const bedtimeInput = document.getElementById('bedtimeInput');
       const countdownEl = document.getElementById('countdown');
+      const countdownHoursEl = document.getElementById('countdownHours');
+      const countdownMinutesEl = document.getElementById('countdownMinutes');
+      const countdownSecondsEl = document.getElementById('countdownSeconds');
       const dateLabel = document.getElementById('dateLabel');
       const bedtimeHint = document.getElementById('bedtimeHint');
       const taskForm = document.getElementById('taskForm');
@@ -793,8 +811,9 @@
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        countdownEl.textContent = [hours, minutes, seconds]
-          .map(value => String(value).padStart(2, '0')).join(':');
+        countdownHoursEl.textContent = String(hours).padStart(2, '0');
+        countdownMinutesEl.textContent = String(minutes).padStart(2, '0');
+        countdownSecondsEl.textContent = String(seconds).padStart(2, '0');
       }
       function renderTasks() {
         taskList.replaceChildren();
