@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050505" />
+  <meta name="application-name" content="MY DAY" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MY DAY" />
+  <link rel="icon" href="./favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>MY DAY</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050505;
+      --panel: #0c0c0c;
+      --line: #292929;
+      --text: #f5f5f5;
+      --muted: #858585;
+      --soft: #bdbdbd;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); }
+    body {
+      min-width: 280px;
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      letter-spacing: -0.025em;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .app {
+      width: min(1440px, 100%);
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0 auto;
+      padding: clamp(16px, 3.2vw, 42px) clamp(14px, 3.2vw, 44px) max(22px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: clamp(14px, 2.1vw, 24px);
+      border-bottom: 1px solid var(--line);
+    }
+    .brand {
+      font-size: clamp(12px, 1.1vw, 14px);
+      font-weight: 700;
+      letter-spacing: .18em;
+    }
+    .date-label {
+      color: var(--muted);
+      font-size: clamp(10px, 1vw, 12px);
+      letter-spacing: .05em;
+      text-align: right;
+    }
+
+    .layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, min(31vw, 360px));
+      gap: clamp(12px, 2vw, 24px);
+      padding-top: clamp(14px, 2vw, 24px);
+    }
+    .panel {
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid #1d1d1d;
+      border-radius: clamp(14px, 1.7vw, 20px);
+    }
+    .countdown-panel {
+      min-height: clamp(340px, calc(100svh - 150px), 760px);
+      padding: clamp(22px, 5vw, 64px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .eyebrow {
+      color: var(--muted);
+      font-size: clamp(10px, .9vw, 12px);
+      font-weight: 650;
+      letter-spacing: .2em;
+    }
+    .countdown {
+      max-width: 100%;
+      margin: clamp(18px, 3.2vh, 34px) 0 10px;
+      color: #fff;
+      font-size: clamp(48px, min(9.2vw, 15vh), 116px);
+      line-height: 1;
+      font-weight: 350;
+      letter-spacing: -.075em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .countdown-caption {
+      color: #a0a0a0;
+      font-size: clamp(11px, 1vw, 14px);
+    }
+    .bedtime-control {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.2vw, 14px);
+      margin-top: clamp(24px, 6vh, 58px);
+      padding: 11px clamp(12px, 1.5vw, 17px);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #090909;
+    }
+    .bedtime-control label {
+      color: var(--muted);
+      font-size: clamp(11px, .95vw, 12px);
+      white-space: nowrap;
+    }
+    .bedtime-control input {
+      width: clamp(82px, 8vw, 96px);
+      min-width: 0;
+      padding: 2px 0;
+      color: var(--text);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      font-size: clamp(15px, 1.3vw, 17px);
+      font-variant-numeric: tabular-nums;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .7; }
+    .hint {
+      min-height: 16px;
+      max-width: 100%;
+      margin-top: 11px;
+      color: #666;
+      font-size: clamp(10px, .85vw, 11px);
+      text-align: center;
+    }
+
+    .tasks-panel {
+      min-height: 0;
+      padding: clamp(18px, 2.2vw, 28px) clamp(15px, 1.9vw, 24px) 18px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tasks-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .tasks-heading h1 {
+      margin: 0;
+      font-size: clamp(12px, 1.1vw, 14px);
+      font-weight: 700;
+      letter-spacing: .13em;
+    }
+    .task-count {
+      color: var(--muted);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .task-form {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0 18px;
+    }
+    .task-input {
+      min-width: 0;
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      background: #080808;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .task-input::placeholder { color: #626262; }
+    .task-input:focus { border-color: #777; }
+    .add-button {
+      width: 43px;
+      min-width: 43px;
+      flex: 0 0 43px;
+      border: 1px solid #eeeeee;
+      border-radius: 10px;
+      background: #f3f3f3;
+      color: #080808;
+      font-size: 23px;
+      line-height: 1;
+      cursor: pointer;
+      transition: opacity .15s ease, transform .15s ease;
+    }
+    .add-button:hover { opacity: .85; }
+    .add-button:active { transform: scale(.96); }
+    .task-list { display: flex; flex-direction: column; gap: 2px; }
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 7px 2px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .check {
+      appearance: none;
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+      margin: 0;
+      border: 1px solid #777;
+      border-radius: 5px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+    }
+    .check:checked { background: #f2f2f2; border-color: #f2f2f2; }
+    .check:checked::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid #111;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    .task-text {
+      flex: 1;
+      min-width: 0;
+      color: #dedede;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .task-row.done .task-text {
+      color: #666;
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+    }
+    .delete-button {
+      width: 27px;
+      height: 27px;
+      flex: 0 0 27px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #666;
+      font-size: 17px;
+      cursor: pointer;
+      opacity: .65;
+    }
+    .delete-button:hover { color: #eee; opacity: 1; background: #202020; }
+    .empty-state {
+      padding: 26px 8px;
+      color: #626262;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .bottom-note {
+      margin-top: auto;
+      padding-top: 20px;
+      color: #555;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    /* 작은 태블릿과 휴대폰: 좁은 두 칸 대신 위아래로 배치 */
+    @media (max-width: 760px) {
+      .app { padding: 17px 14px max(20px, env(safe-area-inset-bottom)); }
+      .layout {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 14px;
+      }
+      .countdown-panel {
+        min-height: clamp(270px, 42svh, 430px);
+        padding: clamp(22px, 6vw, 38px) 14px;
+      }
+      .countdown { font-size: clamp(46px, 12.5vw, 78px); }
+      .bedtime-control { margin-top: clamp(22px, 4vh, 34px); }
+      .tasks-panel { min-height: 230px; padding: 20px 18px 18px; }
+      .task-form { margin-top: 14px; }
+    }
+
+    /* 작은 휴대폰 */
+    @media (max-width: 380px) {
+      .app { padding-right: 11px; padding-left: 11px; }
+      .countdown-panel { min-height: 255px; padding: 24px 9px; }
+      .countdown { font-size: clamp(40px, 12.2vw, 47px); letter-spacing: -.07em; }
+      .bedtime-control { gap: 9px; padding: 10px 12px; }
+      .tasks-panel { padding: 18px 14px 16px; }
+      .task-input { padding: 11px 10px; }
+    }
+
+    /* 휴대폰 가로 화면처럼 높이가 낮은 화면 */
+    @media (max-height: 500px) and (min-width: 560px) {
+      .app { padding-top: 10px; padding-bottom: 12px; }
+      .topbar { padding-bottom: 9px; }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(220px, .8fr);
+        gap: 10px;
+        padding-top: 10px;
+      }
+      .countdown-panel { min-height: 235px; padding: 14px; }
+      .countdown { margin: 14px 0 7px; font-size: clamp(38px, 7vw, 58px); }
+      .bedtime-control { margin-top: 17px; padding: 8px 11px; }
+      .hint { margin-top: 6px; }
+      .tasks-panel { padding: 14px 13px 12px; }
+      .task-form { margin: 9px 0 10px; }
+      .task-row { min-height: 35px; padding: 4px 2px; }
+      .bottom-note { padding-top: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">MY DAY</div>
+      <div class="date-label" id="dateLabel"></div>
+    </header>
+
+    <section class="layout" aria-label="하루 관리">
+      <section class="panel countdown-panel" aria-label="취침 카운트다운">
+        <div class="eyebrow">BEDTIME COUNTDOWN</div>
+        <div class="countdown" id="countdown" role="timer" aria-live="off">--:--:--</div>
+        <div class="countdown-caption">취침까지 남은 시간</div>
+
+        <div class="bedtime-control">
+          <label for="bedtimeInput">취침 시간</label>
+          <input id="bedtimeInput" type="time" value="23:30" aria-label="취침 시간 설정" />
+        </div>
+        <div class="hint" id="bedtimeHint">취침 시간을 바꾸면 카운트다운에 바로 반영돼요.</div>
+      </section>
+
+      <aside class="panel tasks-panel" aria-label="오늘의 할 일">
+        <div class="tasks-heading">
+          <h1>TODAY'S TASKS</h1>
+          <span class="task-count" id="taskCount">0 / 0</span>
+        </div>
+        <form class="task-form" id="taskForm">
+          <input class="task-input" id="taskInput" type="text" maxlength="100" placeholder="할 일을 입력해 주세요" autocomplete="off" aria-label="새 할 일" />
+          <button class="add-button" type="submit" aria-label="할 일 추가">+</button>
+        </form>
+        <div class="task-list" id="taskList"></div>
+        <div class="bottom-note">오늘 할 일을 적고, 하나씩 완료해 보세요.</div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const BEDTIME_KEY = 'my-day-countdown-bedtime-v1';
+      const TASKS_PREFIX = 'my-day-countdown-tasks-';
+      const bedtimeInput = document.getElementById('bedtimeInput');
+      const countdownEl = document.getElementById('countdown');
+      const dateLabel = document.getElementById('dateLabel');
+      const bedtimeHint = document.getElementById('bedtimeHint');
+      const taskForm = document.getElementById('taskForm');
+      const taskInput = document.getElementById('taskInput');
+      const taskList = document.getElementById('taskList');
+      const taskCount = document.getElementById('taskCount');
+
+      let activeDayKey = getDayKey(new Date());
+      let tasks = loadTasks(activeDayKey);
+
+      function safeGet(key) {
+        try { return localStorage.getItem(key); } catch (_) { return null; }
+      }
+      function safeSet(key, value) {
+        try { localStorage.setItem(key, value); } catch (_) { /* 저장 공간을 사용할 수 없는 환경에서는 현재 화면에서만 동작 */ }
+      }
+      function getDayKey(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('ko-KR', {
+          weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).format(date);
+      }
+      function loadTasks(dayKey) {
+        const saved = safeGet(TASKS_PREFIX + dayKey);
+        if (!saved) return [];
+        try {
+          const parsed = JSON.parse(saved);
+          return Array.isArray(parsed) ? parsed.filter(item => item && typeof item.text === 'string') : [];
+        } catch (_) { return []; }
+      }
+      function saveTasks() {
+        safeSet(TASKS_PREFIX + activeDayKey, JSON.stringify(tasks));
+      }
+      function getNextBedtime(now) {
+        const [hours, minutes] = (bedtimeInput.value || '23:30').split(':').map(Number);
+        const target = new Date(now);
+        target.setHours(hours || 0, minutes || 0, 0, 0);
+        if (target <= now) target.setDate(target.getDate() + 1);
+        return target;
+      }
+      function updateCountdown() {
+        const now = new Date();
+        const dayKey = getDayKey(now);
+        if (dayKey !== activeDayKey) {
+          activeDayKey = dayKey;
+          tasks = loadTasks(activeDayKey);
+          renderTasks();
+        }
+        dateLabel.textContent = formatDate(now);
+        const remainingMs = Math.max(0, getNextBedtime(now).getTime() - now.getTime());
+        const totalSeconds = Math.floor(remainingMs / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        countdownEl.textContent = [hours, minutes, seconds]
+          .map(value => String(value).padStart(2, '0')).join(':');
+      }
+      function renderTasks() {
+        taskList.replaceChildren();
+        const completed = tasks.filter(task => task.done).length;
+        taskCount.textContent = `${completed} / ${tasks.length}`;
+
+        if (tasks.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = '아직 등록된 할 일이 없어요.\n오늘 할 일을 하나 적어보세요.';
+          taskList.appendChild(empty);
+          return;
+        }
+
+        tasks.forEach(task => {
+          const row = document.createElement('div');
+          row.className = 'task-row' + (task.done ? ' done' : '');
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'check';
+          checkbox.checked = Boolean(task.done);
+          checkbox.setAttribute('aria-label', `${task.text} 완료`);
+          checkbox.addEventListener('change', () => {
+            task.done = checkbox.checked;
+            saveTasks();
+            renderTasks();
+          });
+
+          const text = document.createElement('span');
+          text.className = 'task-text';
+          text.textContent = task.text;
+
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'delete-button';
+          remove.textContent = '×';
+          remove.setAttribute('aria-label', `${task.text} 삭제`);
+          remove.addEventListener('click', () => {
+            tasks = tasks.filter(item => item.id !== task.id);
+            saveTasks();
+            renderTasks();
+          });
+
+          row.append(checkbox, text, remove);
+          taskList.appendChild(row);
+        });
+      }
+
+      const savedBedtime = safeGet(BEDTIME_KEY);
+      if (savedBedtime && /^([01]\d|2[0-3]):[0-5]\d$/.test(savedBedtime)) {
+        bedtimeInput.value = savedBedtime;
+      }
+      bedtimeInput.addEventListener('change', () => {
+        if (!bedtimeInput.value) bedtimeInput.value = '23:30';
+        safeSet(BEDTIME_KEY, bedtimeInput.value);
+        bedtimeHint.textContent = '취침 시간이 저장되었어요.';
+        updateCountdown();
+      });
+
+      taskForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const text = taskInput.value.trim();
+        if (!text) {
+          taskInput.focus();
+          return;
+        }
+        tasks.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, text, done: false });
+        saveTasks();
+        renderTasks();
+        taskInput.value = '';
+        taskInput.focus();
+      });
+
+      renderTasks();
+      updateCountdown();
+      window.setInterval(updateCountdown, 250);
+    })();
+  </script>
+  <script>
+    // HTTPS로 게시된 경우 홈 화면 앱 설치와 오프라인 실행을 지원합니다.
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
