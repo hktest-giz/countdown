@@ -67,15 +67,30 @@ input::placeholder {
 
 .app {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-/* COUNTDOWN */
+/* MAIN LAYOUT */
+
+.main-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(25px, 4vw, 50px);
+    width: 100%;
+    min-height: 75vh;
+}
+
+/* DAY COUNTDOWN */
 
 .countdown-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
     text-align: center;
-    padding: clamp(25px, 6vw, 65px) 10px;
+    padding: 30px 5px;
 }
 
 .section-title {
@@ -85,10 +100,11 @@ input::placeholder {
 }
 
 .countdown {
-    font-size: clamp(38px, 10vw, 100px);
+    width: 100%;
+    font-size: clamp(32px, 6.5vw, 90px);
     font-weight: 300;
-    letter-spacing: clamp(1px, 0.8vw, 7px);
-    margin: 20px 0;
+    letter-spacing: clamp(0px, 0.5vw, 5px);
+    margin: 25px 0;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
@@ -112,17 +128,18 @@ input::placeholder {
     color-scheme: dark;
 }
 
-/* MAIN LAYOUT */
+/* RIGHT SIDE */
 
-.main-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(20px, 4vw, 45px);
-    margin-top: 15px;
+.right-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    min-width: 0;
 }
 
 .section {
     min-width: 0;
+    width: 100%;
     border-top: 1px solid #333;
     padding-top: 20px;
 }
@@ -145,10 +162,6 @@ input::placeholder {
     padding: 3px 8px;
 }
 
-.add-button:hover {
-    color: #999;
-}
-
 /* TASKS */
 
 .task-input-area {
@@ -167,6 +180,7 @@ input::placeholder {
     border-radius: 8px;
     padding: 0 16px;
     font-size: 14px;
+    flex-shrink: 0;
 }
 
 .add-task-button:active {
@@ -183,13 +197,11 @@ input::placeholder {
 .task-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-height: 48px;
-    padding: 10px 8px;
+    padding: 8px 5px;
     border-bottom: 1px solid #222;
     border-radius: 4px;
-    cursor: grab;
-    touch-action: pan-y;
 }
 
 .task-item.dragging {
@@ -235,14 +247,28 @@ input::placeholder {
     box-shadow: inset 0 0 0 4px black;
 }
 
-.delete-button {
-    color: #777;
-    font-size: 19px;
-    padding: 4px;
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
 }
 
+.move-button,
+.delete-button {
+    color: #777;
+    font-size: 17px;
+    padding: 5px;
+}
+
+.move-button:hover,
 .delete-button:hover {
     color: white;
+}
+
+.move-button:disabled {
+    opacity: 0.2;
+    cursor: default;
 }
 
 .empty-message {
@@ -318,7 +344,7 @@ input::placeholder {
     bottom: 5px;
     width: 4px;
     height: 4px;
-    background: #fff;
+    background: white;
     border-radius: 50%;
 }
 
@@ -379,7 +405,7 @@ input::placeholder {
 .footer {
     display: flex;
     justify-content: center;
-    margin: 45px 0 15px;
+    margin: 35px 0 15px;
 }
 
 .footer button {
@@ -393,40 +419,48 @@ input::placeholder {
 /* RESPONSIVE */
 
 @media (max-width: 650px) {
+
     body {
         padding: 16px;
     }
 
+    .main-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+        min-height: auto;
+    }
+
     .countdown-section {
         padding: 35px 0 45px;
+        min-height: auto;
     }
 
-    .main-layout {
-        grid-template-columns: minmax(0, 1fr);
+    .countdown {
+        font-size: clamp(32px, 10vw, 65px);
+        letter-spacing: 0;
+        margin: 20px 0;
+    }
+
+    .right-layout {
         gap: 35px;
-    }
-
-    .section {
-        width: 100%;
-    }
-
-    .calendar-date {
-        aspect-ratio: 1;
     }
 }
 
 @media (max-width: 360px) {
+
     body {
         padding: 12px;
-    }
-
-    .countdown {
-        letter-spacing: 0;
     }
 
     .add-task-button {
         padding: 0 10px;
     }
+
+    .task-item {
+        gap: 5px;
+    }
+
 }
 </style>
 </head>
@@ -435,109 +469,128 @@ input::placeholder {
 
 <div class="app">
 
-    <!-- DAY COUNTDOWN -->
-
-    <section class="countdown-section">
-
-        <div class="section-title">DAY COUNTDOWN</div>
-
-        <div class="countdown" id="countdown">
-            --:--:--
-        </div>
-
-        <div class="sleep-setting">
-            <label for="sleepTime">BEDTIME</label>
-            <input type="time" id="sleepTime" value="23:00">
-        </div>
-
-    </section>
-
-
     <div class="main-layout">
 
-        <!-- TASKS -->
+        <!-- DAY COUNTDOWN -->
 
-        <section class="section">
+        <section class="countdown-section">
 
-            <div class="section-header">
-                <h2>TASKS</h2>
-                <button class="add-button" id="focusTask">+</button>
+            <div class="section-title">
+                DAY COUNTDOWN
             </div>
 
-            <div class="task-input-area">
-                <input
-                    type="text"
-                    id="taskInput"
-                    placeholder="Add a task..."
-                    maxlength="150"
-                >
-                <button class="add-task-button" id="addTask">
-                    ADD
-                </button>
+            <div class="countdown" id="countdown">
+                --:--:--
             </div>
 
-            <div class="task-list" id="taskList">
+            <div class="sleep-setting">
+                <label for="sleepTime">BEDTIME</label>
+                <input type="time" id="sleepTime" value="23:00">
             </div>
 
         </section>
 
 
-        <!-- CALENDAR -->
+        <!-- RIGHT SIDE -->
 
-        <section class="section">
+        <div class="right-layout">
 
-            <div class="section-header">
-                <h2>CALENDAR</h2>
-            </div>
+            <!-- TASKS -->
 
-            <div class="calendar-nav">
+            <section class="section">
 
-                <button id="prevMonth">‹</button>
-
-                <strong id="monthTitle"></strong>
-
-                <button id="nextMonth">›</button>
-
-            </div>
-
-            <div class="calendar-grid" id="calendar">
-
-            </div>
-
-            <div class="calendar-input-area">
-
-                <div class="selected-date-title" id="selectedDateTitle">
-                    SELECT DATE
+                <div class="section-header">
+                    <h2>TASKS</h2>
+                    <button class="add-button" id="focusTask">+</button>
                 </div>
 
-                <div class="calendar-input-row">
+                <div class="task-input-area">
 
                     <input
                         type="text"
-                        id="calendarInput"
+                        id="taskInput"
                         placeholder="Add a task..."
                         maxlength="150"
                     >
 
-                    <button class="add-task-button" id="addCalendarTask">
+                    <button class="add-task-button" id="addTask">
                         ADD
                     </button>
 
                 </div>
 
-                <div class="calendar-task-list" id="calendarTaskList">
+                <div class="task-list" id="taskList"></div>
+
+            </section>
+
+
+            <!-- CALENDAR -->
+
+            <section class="section">
+
+                <div class="section-header">
+                    <h2>CALENDAR</h2>
+                </div>
+
+                <div class="calendar-nav">
+
+                    <button id="prevMonth">‹</button>
+
+                    <strong id="monthTitle"></strong>
+
+                    <button id="nextMonth">›</button>
 
                 </div>
 
-            </div>
+                <div class="calendar-grid" id="calendar"></div>
 
-        </section>
+                <div class="calendar-input-area">
+
+                    <div
+                        class="selected-date-title"
+                        id="selectedDateTitle"
+                    >
+                        SELECT DATE
+                    </div>
+
+                    <div class="calendar-input-row">
+
+                        <input
+                            type="text"
+                            id="calendarInput"
+                            placeholder="Add a task..."
+                            maxlength="150"
+                        >
+
+                        <button
+                            class="add-task-button"
+                            id="addCalendarTask"
+                        >
+                            ADD
+                        </button>
+
+                    </div>
+
+                    <div
+                        class="calendar-task-list"
+                        id="calendarTaskList"
+                    ></div>
+
+                </div>
+
+            </section>
+
+        </div>
 
     </div>
 
 
+    <!-- HOME SCREEN -->
+
     <div class="footer">
-        <button id="installButton">ADD TO HOME SCREEN</button>
+        <button id="installButton">
+            ADD TO HOME SCREEN
+        </button>
     </div>
 
 </div>
@@ -552,32 +605,51 @@ input::placeholder {
 const STORAGE_KEY = "dayPlannerData";
 
 function loadData() {
+
     try {
+
         const saved = JSON.parse(
             localStorage.getItem(STORAGE_KEY)
         );
 
         if (saved && Array.isArray(saved.tasks)) {
+
             return {
-                tasks: saved.tasks,
+                tasks: saved.tasks.map(task => ({
+                    ...task,
+                    date: task.date || null,
+                    completed: !!task.completed
+                })),
                 sleepTime: saved.sleepTime || "23:00"
             };
+
         }
+
     } catch (e) {}
 
     return {
         tasks: [],
         sleepTime: "23:00"
     };
+
 }
 
 let data = loadData();
 
 function saveData() {
+
     localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(data)
     );
+
+}
+
+function makeId() {
+
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2);
+
 }
 
 
@@ -586,20 +658,19 @@ function saveData() {
 ========================= */
 
 function dateKey(date) {
+
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
     const d = String(date.getDate()).padStart(2, "0");
 
     return `${y}-${m}-${d}`;
+
 }
 
 function todayKey() {
-    return dateKey(new Date());
-}
 
-function makeId() {
-    return Date.now().toString(36) +
-        Math.random().toString(36).slice(2);
+    return dateKey(new Date());
+
 }
 
 
@@ -607,16 +678,23 @@ function makeId() {
    COUNTDOWN
 ========================= */
 
-const countdown = document.getElementById("countdown");
-const sleepTimeInput = document.getElementById("sleepTime");
+const countdown =
+    document.getElementById("countdown");
+
+const sleepTimeInput =
+    document.getElementById("sleepTime");
 
 sleepTimeInput.value = data.sleepTime;
 
 sleepTimeInput.addEventListener("change", () => {
+
     data.sleepTime = sleepTimeInput.value || "23:00";
+
     saveData();
     updateCountdown();
+
 });
+
 
 function updateCountdown() {
 
@@ -630,7 +708,6 @@ function updateCountdown() {
 
     target.setHours(hours, minutes, 0, 0);
 
-    // 이미 취침시간이 지났다면 다음 날로 설정
     if (target <= now) {
         target.setDate(target.getDate() + 1);
     }
@@ -650,9 +727,11 @@ function updateCountdown() {
         `${String(h).padStart(2, "0")}:` +
         `${String(m).padStart(2, "0")}:` +
         `${String(s).padStart(2, "0")}`;
+
 }
 
 updateCountdown();
+
 setInterval(updateCountdown, 1000);
 
 
@@ -660,12 +739,17 @@ setInterval(updateCountdown, 1000);
    TASKS
 ========================= */
 
-const taskInput = document.getElementById("taskInput");
-const taskList = document.getElementById("taskList");
+const taskInput =
+    document.getElementById("taskInput");
 
-document.getElementById("focusTask").addEventListener("click", () => {
-    taskInput.focus();
-});
+const taskList =
+    document.getElementById("taskList");
+
+document.getElementById("focusTask")
+    .addEventListener("click", () => {
+        taskInput.focus();
+    });
+
 
 function addTask() {
 
@@ -684,14 +768,71 @@ function addTask() {
 
     saveData();
     renderTasks();
+
 }
 
-document.getElementById("addTask").addEventListener("click", addTask);
+document.getElementById("addTask")
+    .addEventListener("click", addTask);
 
 taskInput.addEventListener("keydown", e => {
+
     if (e.key === "Enter") addTask();
+
 });
 
+
+/* =========================
+   TASK ORDER
+========================= */
+
+function moveTask(id, direction) {
+
+    const index = data.tasks.findIndex(
+        task => task.id === id
+    );
+
+    if (index < 0) return;
+
+    const task = data.tasks[index];
+
+    const group = data.tasks
+        .map((t, i) => ({ task: t, index: i }))
+        .filter(item => item.task.date === task.date);
+
+    const position = group.findIndex(
+        item => item.task.id === id
+    );
+
+    const nextPosition = position + direction;
+
+    if (
+        nextPosition < 0 ||
+        nextPosition >= group.length
+    ) return;
+
+    const other = group[nextPosition].task;
+
+    const otherIndex = data.tasks.findIndex(
+        t => t.id === other.id
+    );
+
+    [
+        data.tasks[index],
+        data.tasks[otherIndex]
+    ] = [
+        data.tasks[otherIndex],
+        data.tasks[index]
+    ];
+
+    saveData();
+    renderTasks();
+
+}
+
+
+/* =========================
+   TASK RENDER
+========================= */
 
 function renderTasks() {
 
@@ -699,12 +840,10 @@ function renderTasks() {
 
     const today = todayKey();
 
-    // 오늘 날짜의 달력 할 일을 먼저 표시
     const todayTasks = data.tasks.filter(
         task => task.date === today
     );
 
-    // 날짜가 지정되지 않은 일반 할 일
     const normalTasks = data.tasks.filter(
         task => !task.date
     );
@@ -715,28 +854,35 @@ function renderTasks() {
     ];
 
     if (visibleTasks.length === 0) {
+
         taskList.innerHTML =
             '<div class="empty-message">No tasks yet.</div>';
+
         return;
+
     }
 
-    visibleTasks.forEach(task => {
+    visibleTasks.forEach((task, index) => {
 
         const item = document.createElement("div");
+
         item.className = "task-item";
         item.draggable = true;
         item.dataset.id = task.id;
 
         const handle = document.createElement("span");
+
         handle.className = "drag-handle";
         handle.textContent = "⠿";
 
         const checkbox = document.createElement("input");
+
         checkbox.type = "checkbox";
         checkbox.className = "task-check";
-        checkbox.checked = !!task.completed;
+        checkbox.checked = task.completed;
 
         const text = document.createElement("span");
+
         text.className = "task-text";
         text.textContent = task.text;
 
@@ -744,110 +890,163 @@ function renderTasks() {
             text.classList.add("completed");
         }
 
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const up = document.createElement("button");
+
+        up.className = "move-button";
+        up.textContent = "↑";
+        up.setAttribute("aria-label", "Move up");
+
+        const down = document.createElement("button");
+
+        down.className = "move-button";
+        down.textContent = "↓";
+        down.setAttribute("aria-label", "Move down");
+
+        const group = data.tasks.filter(
+            t => t.date === task.date
+        );
+
+        const position = group.findIndex(
+            t => t.id === task.id
+        );
+
+        up.disabled = position === 0;
+        down.disabled = position === group.length - 1;
+
+        up.addEventListener("click", () => {
+            moveTask(task.id, -1);
+        });
+
+        down.addEventListener("click", () => {
+            moveTask(task.id, 1);
+        });
+
         const del = document.createElement("button");
+
         del.className = "delete-button";
         del.textContent = "×";
         del.setAttribute("aria-label", "Delete task");
 
         checkbox.addEventListener("change", () => {
+
             task.completed = checkbox.checked;
+
             saveData();
             renderTasks();
+
         });
 
         del.addEventListener("click", () => {
+
             data.tasks = data.tasks.filter(
                 t => t.id !== task.id
             );
+
             saveData();
+
             renderTasks();
             renderCalendar();
             renderCalendarTasks();
+
         });
 
-        item.append(handle, checkbox, text, del);
+        actions.append(up, down, del);
+
+        item.append(
+            handle,
+            checkbox,
+            text,
+            actions
+        );
 
         taskList.appendChild(item);
 
     });
 
     setupDragAndDrop();
+
 }
 
 
 /* =========================
-   TASK DRAG & DROP
+   DESKTOP DRAG & DROP
 ========================= */
 
 let draggedId = null;
 
 function setupDragAndDrop() {
 
-    const items = taskList.querySelectorAll(".task-item");
+    const items =
+        taskList.querySelectorAll(".task-item");
 
     items.forEach(item => {
 
         item.addEventListener("dragstart", () => {
+
             draggedId = item.dataset.id;
+
             item.classList.add("dragging");
+
         });
 
         item.addEventListener("dragend", () => {
+
             item.classList.remove("dragging");
 
-            taskList.querySelectorAll(".task-item").forEach(el => {
-                el.classList.remove("drag-over");
-            });
+            taskList.querySelectorAll(".task-item")
+                .forEach(el => {
+                    el.classList.remove("drag-over");
+                });
+
         });
 
         item.addEventListener("dragover", e => {
+
             e.preventDefault();
+
             item.classList.add("drag-over");
+
         });
 
         item.addEventListener("dragleave", () => {
+
             item.classList.remove("drag-over");
+
         });
 
         item.addEventListener("drop", e => {
 
             e.preventDefault();
 
+            item.classList.remove("drag-over");
+
             const targetId = item.dataset.id;
 
             if (!draggedId || draggedId === targetId) return;
 
-            const visible = [
-                ...data.tasks.filter(t => t.date === todayKey()),
-                ...data.tasks.filter(t => !t.date)
-            ];
-
-            const dragged = visible.find(t => t.id === draggedId);
-            const target = visible.find(t => t.id === targetId);
-
-            if (!dragged || !target) return;
-
-            // 오늘 할 일과 일반 할 일의 그룹은 유지
-            if (!!dragged.date !== !!target.date) return;
-
-            const group = data.tasks.filter(
-                t => !!t.date === !!dragged.date &&
-                t.date === dragged.date
+            const from = data.tasks.findIndex(
+                t => t.id === draggedId
             );
 
-            const from = group.findIndex(t => t.id === draggedId);
-            const to = group.findIndex(t => t.id === targetId);
+            const to = data.tasks.findIndex(
+                t => t.id === targetId
+            );
 
             if (from < 0 || to < 0) return;
 
-            group.splice(from, 1);
-            group.splice(to, 0, dragged);
+            if (
+                data.tasks[from].date !==
+                data.tasks[to].date
+            ) return;
 
-            const otherTasks = data.tasks.filter(
-                t => t.date !== dragged.date
-            );
+            const [moved] = data.tasks.splice(from, 1);
 
-            data.tasks = [...otherTasks, ...group];
+            data.tasks.splice(to, 0, moved);
+
+            draggedId = null;
 
             saveData();
             renderTasks();
@@ -855,6 +1054,7 @@ function setupDragAndDrop() {
         });
 
     });
+
 }
 
 
@@ -862,8 +1062,11 @@ function setupDragAndDrop() {
    CALENDAR
 ========================= */
 
-const calendar = document.getElementById("calendar");
-const monthTitle = document.getElementById("monthTitle");
+const calendar =
+    document.getElementById("calendar");
+
+const monthTitle =
+    document.getElementById("monthTitle");
 
 const selectedDateTitle =
     document.getElementById("selectedDateTitle");
@@ -875,6 +1078,7 @@ const calendarTaskList =
     document.getElementById("calendarTaskList");
 
 let currentMonth = new Date();
+
 let selectedDate = todayKey();
 
 
@@ -889,29 +1093,31 @@ function renderCalendar() {
         `${year}년 ${month + 1}월`;
 
     const weekdays = [
-        "SUN", "MON", "TUE", "WED",
-        "THU", "FRI", "SAT"
+        "SUN", "MON", "TUE",
+        "WED", "THU", "FRI", "SAT"
     ];
 
     weekdays.forEach(day => {
+
         const el = document.createElement("div");
+
         el.className = "calendar-day-name";
         el.textContent = day;
+
         calendar.appendChild(el);
+
     });
 
-    const firstDay = new Date(year, month, 1).getDay();
+    const firstDay = new Date(
+        year, month, 1
+    ).getDay();
 
     const lastDate = new Date(
-        year,
-        month + 1,
-        0
+        year, month + 1, 0
     ).getDate();
 
     const previousLastDate = new Date(
-        year,
-        month,
-        0
+        year, month, 0
     ).getDate();
 
     for (let i = 0; i < 42; i++) {
@@ -984,11 +1190,13 @@ function renderCalendar() {
             selectedDate = key;
 
             if (otherMonth) {
+
                 currentMonth = new Date(
                     dateObject.getFullYear(),
                     dateObject.getMonth(),
                     1
                 );
+
             }
 
             renderCalendar();
@@ -1003,22 +1211,28 @@ function renderCalendar() {
 }
 
 
-document.getElementById("prevMonth").addEventListener("click", () => {
+document.getElementById("prevMonth")
+    .addEventListener("click", () => {
 
-    currentMonth.setMonth(currentMonth.getMonth() - 1);
+        currentMonth.setMonth(
+            currentMonth.getMonth() - 1
+        );
 
-    renderCalendar();
+        renderCalendar();
 
-});
+    });
 
 
-document.getElementById("nextMonth").addEventListener("click", () => {
+document.getElementById("nextMonth")
+    .addEventListener("click", () => {
 
-    currentMonth.setMonth(currentMonth.getMonth() + 1);
+        currentMonth.setMonth(
+            currentMonth.getMonth() + 1
+        );
 
-    renderCalendar();
+        renderCalendar();
 
-});
+    });
 
 
 /* =========================
@@ -1029,7 +1243,8 @@ function renderCalendarTasks() {
 
     calendarTaskList.innerHTML = "";
 
-    const [year, month, day] = selectedDate.split("-");
+    const [year, month, day] =
+        selectedDate.split("-");
 
     selectedDateTitle.textContent =
         `${year}.${month}.${day}`;
@@ -1048,12 +1263,15 @@ function renderCalendarTasks() {
     tasks.forEach(task => {
 
         const row = document.createElement("div");
+
         row.className = "calendar-task";
 
         const span = document.createElement("span");
+
         span.textContent = task.text;
 
         const del = document.createElement("button");
+
         del.textContent = "×";
         del.setAttribute("aria-label", "Delete scheduled task");
 
@@ -1064,6 +1282,7 @@ function renderCalendarTasks() {
             );
 
             saveData();
+
             renderCalendar();
             renderCalendarTasks();
             renderTasks();
@@ -1071,6 +1290,7 @@ function renderCalendarTasks() {
         });
 
         row.append(span, del);
+
         calendarTaskList.appendChild(row);
 
     });
@@ -1085,10 +1305,12 @@ function addCalendarTask() {
     if (!text) return;
 
     data.tasks.push({
+
         id: makeId(),
         text: text,
         date: selectedDate,
         completed: false
+
     });
 
     calendarInput.value = "";
@@ -1106,7 +1328,11 @@ document.getElementById("addCalendarTask")
     .addEventListener("click", addCalendarTask);
 
 calendarInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") addCalendarTask();
+
+    if (e.key === "Enter") {
+        addCalendarTask();
+    }
+
 });
 
 
@@ -1141,7 +1367,6 @@ installButton.addEventListener("click", async () => {
 
     }
 
-    // iPhone / iPad 안내
     if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
 
         alert(
@@ -1153,19 +1378,1432 @@ installButton.addEventListener("click", async () => {
 
     }
 
-    // 다른 브라우저의 공유 기능
     if (navigator.share) {
 
         try {
+
             await navigator.share({
                 title: "DAY PLANNER",
                 url: location.href
             });
+
         } catch (e) {}
 
     } else {
 
-        alert("브라우저 메뉴에서 홈 화면에 추가를 선택하세요.");
+        alert(
+            "브라우저 메뉴에서 홈 화면에 추가를 선택하세요."
+        );
+
+    }
+
+});
+
+
+/* =========================
+   SERVICE WORKER
+========================= */
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+        navigator.serviceWorker.register("
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+<title>DAY PLANNER</title>
+
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" href="./favicon-32.png">
+
+<meta name="theme-color" content="#000000">
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    background: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100dvh;
+    padding: clamp(16px, 3vw, 40px);
+    overflow-x: hidden;
+}
+
+button, input {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+input {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    outline: none;
+    min-width: 0;
+    font-size: 16px !important;
+    color: white;
+}
+
+input:focus {
+    border-color: #888;
+}
+
+input::placeholder {
+    color: #777;
+}
+
+.app {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* MAIN LAYOUT */
+
+.main-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(25px, 4vw, 50px);
+    width: 100%;
+    min-height: 75vh;
+}
+
+/* DAY COUNTDOWN */
+
+.countdown-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    text-align: center;
+    padding: 30px 5px;
+}
+
+.section-title {
+    font-size: clamp(13px, 1.5vw, 17px);
+    letter-spacing: 3px;
+    font-weight: 600;
+}
+
+.countdown {
+    width: 100%;
+    font-size: clamp(32px, 6.5vw, 90px);
+    font-weight: 300;
+    letter-spacing: clamp(0px, 0.5vw, 5px);
+    margin: 25px 0;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.sleep-setting {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sleep-setting label {
+    font-size: 13px;
+    color: #aaa;
+}
+
+.sleep-setting input {
+    width: 125px;
+    text-align: center;
+    color-scheme: dark;
+}
+
+/* RIGHT SIDE */
+
+.right-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    min-width: 0;
+}
+
+.section {
+    min-width: 0;
+    width: 100%;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 17px;
+    letter-spacing: 2px;
+}
+
+.add-button {
+    font-size: 24px;
+    color: #fff;
+    padding: 3px 8px;
+}
+
+/* TASKS */
+
+.task-input-area {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.task-input-area input {
+    flex: 1;
+    width: 100%;
+}
+
+.add-task-button {
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 0 16px;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.add-task-button:active {
+    background: #222;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 40px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 8px 5px;
+    border-bottom: 1px solid #222;
+    border-radius: 4px;
+}
+
+.task-item.dragging {
+    opacity: 0.35;
+}
+
+.task-item.drag-over {
+    border-top: 2px solid white;
+}
+
+.drag-handle {
+    color: #666;
+    font-size: 17px;
+    cursor: grab;
+    user-select: none;
+}
+
+.task-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.task-text.completed {
+    color: #666;
+    text-decoration: line-through;
+}
+
+.task-check {
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    border: 1px solid #777;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+}
+
+.task-check:checked {
+    background: white;
+    box-shadow: inset 0 0 0 4px black;
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.move-button,
+.delete-button {
+    color: #777;
+    font-size: 17px;
+    padding: 5px;
+}
+
+.move-button:hover,
+.delete-button:hover {
+    color: white;
+}
+
+.move-button:disabled {
+    opacity: 0.2;
+    cursor: default;
+}
+
+.empty-message {
+    color: #666;
+    font-size: 13px;
+    padding: 15px 5px;
+}
+
+/* CALENDAR */
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.calendar-nav strong {
+    font-size: 16px;
+}
+
+.calendar-nav button {
+    padding: 5px 10px;
+    font-size: 19px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.calendar-day-name {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+    padding: 8px 0;
+}
+
+.calendar-date {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    min-width: 0;
+    border-radius: 8px;
+    font-size: clamp(11px, 1.5vw, 15px);
+    color: #ddd;
+}
+
+.calendar-date:hover {
+    background: #222;
+}
+
+.calendar-date.today {
+    border: 1px solid #aaa;
+}
+
+.calendar-date.selected {
+    background: white;
+    color: black;
+}
+
+.calendar-date.other-month {
+    color: #444;
+}
+
+.calendar-date.has-task::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+}
+
+.calendar-date.selected.has-task::after {
+    background: black;
+}
+
+.calendar-input-area {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #333;
+}
+
+.selected-date-title {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 12px;
+}
+
+.calendar-input-row {
+    display: flex;
+    gap: 7px;
+}
+
+.calendar-input-row input {
+    flex: 1;
+    width: 100%;
+}
+
+.calendar-task-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.calendar-task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 14px;
+    padding: 7px 3px;
+}
+
+.calendar-task span {
+    overflow-wrap: anywhere;
+}
+
+.calendar-task button {
+    color: #888;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* FOOTER */
+
+.footer {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 15px;
+}
+
+.footer button {
+    color: #aaa;
+    font-size: 12px;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 650px) {
+
+    body {
+        padding: 16px;
+    }
+
+    .main-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+        min-height: auto;
+    }
+
+    .countdown-section {
+        padding: 35px 0 45px;
+        min-height: auto;
+    }
+
+    .countdown {
+        font-size: clamp(32px, 10vw, 65px);
+        letter-spacing: 0;
+        margin: 20px 0;
+    }
+
+    .right-layout {
+        gap: 35px;
+    }
+}
+
+@media (max-width: 360px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .add-task-button {
+        padding: 0 10px;
+    }
+
+    .task-item {
+        gap: 5px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="main-layout">
+
+        <!-- DAY COUNTDOWN -->
+
+        <section class="countdown-section">
+
+            <div class="section-title">
+                DAY COUNTDOWN
+            </div>
+
+            <div class="countdown" id="countdown">
+                --:--:--
+            </div>
+
+            <div class="sleep-setting">
+                <label for="sleepTime">BEDTIME</label>
+                <input type="time" id="sleepTime" value="23:00">
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="right-layout">
+
+            <!-- TASKS -->
+
+            <section class="section">
+
+                <div class="section-header">
+                    <h2>TASKS</h2>
+                    <button class="add-button" id="focusTask">+</button>
+                </div>
+
+                <div class="task-input-area">
+
+                    <input
+                        type="text"
+                        id="taskInput"
+                        placeholder="Add a task..."
+                        maxlength="150"
+                    >
+
+                    <button class="add-task-button" id="addTask">
+                        ADD
+                    </button>
+
+                </div>
+
+                <div class="task-list" id="taskList"></div>
+
+            </section>
+
+
+            <!-- CALENDAR -->
+
+            <section class="section">
+
+                <div class="section-header">
+                    <h2>CALENDAR</h2>
+                </div>
+
+                <div class="calendar-nav">
+
+                    <button id="prevMonth">‹</button>
+
+                    <strong id="monthTitle"></strong>
+
+                    <button id="nextMonth">›</button>
+
+                </div>
+
+                <div class="calendar-grid" id="calendar"></div>
+
+                <div class="calendar-input-area">
+
+                    <div
+                        class="selected-date-title"
+                        id="selectedDateTitle"
+                    >
+                        SELECT DATE
+                    </div>
+
+                    <div class="calendar-input-row">
+
+                        <input
+                            type="text"
+                            id="calendarInput"
+                            placeholder="Add a task..."
+                            maxlength="150"
+                        >
+
+                        <button
+                            class="add-task-button"
+                            id="addCalendarTask"
+                        >
+                            ADD
+                        </button>
+
+                    </div>
+
+                    <div
+                        class="calendar-task-list"
+                        id="calendarTaskList"
+                    ></div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+
+    <!-- HOME SCREEN -->
+
+    <div class="footer">
+        <button id="installButton">
+            ADD TO HOME SCREEN
+        </button>
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA & STORAGE
+========================= */
+
+const STORAGE_KEY = "dayPlannerData";
+
+function loadData() {
+
+    try {
+
+        const saved = JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        );
+
+        if (saved && Array.isArray(saved.tasks)) {
+
+            return {
+                tasks: saved.tasks.map(task => ({
+                    ...task,
+                    date: task.date || null,
+                    completed: !!task.completed
+                })),
+                sleepTime: saved.sleepTime || "23:00"
+            };
+
+        }
+
+    } catch (e) {}
+
+    return {
+        tasks: [],
+        sleepTime: "23:00"
+    };
+
+}
+
+let data = loadData();
+
+function saveData() {
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+
+}
+
+function makeId() {
+
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2);
+
+}
+
+
+/* =========================
+   DATE HELPERS
+========================= */
+
+function dateKey(date) {
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${d}`;
+
+}
+
+function todayKey() {
+
+    return dateKey(new Date());
+
+}
+
+
+/* =========================
+   COUNTDOWN
+========================= */
+
+const countdown =
+    document.getElementById("countdown");
+
+const sleepTimeInput =
+    document.getElementById("sleepTime");
+
+sleepTimeInput.value = data.sleepTime;
+
+sleepTimeInput.addEventListener("change", () => {
+
+    data.sleepTime = sleepTimeInput.value || "23:00";
+
+    saveData();
+    updateCountdown();
+
+});
+
+
+function updateCountdown() {
+
+    const now = new Date();
+
+    const [hours, minutes] = data.sleepTime
+        .split(":")
+        .map(Number);
+
+    let target = new Date(now);
+
+    target.setHours(hours, minutes, 0, 0);
+
+    if (target <= now) {
+        target.setDate(target.getDate() + 1);
+    }
+
+    const remaining = Math.max(
+        0,
+        target.getTime() - now.getTime()
+    );
+
+    const totalSeconds = Math.floor(remaining / 1000);
+
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+
+    countdown.textContent =
+        `${String(h).padStart(2, "0")}:` +
+        `${String(m).padStart(2, "0")}:` +
+        `${String(s).padStart(2, "0")}`;
+
+}
+
+updateCountdown();
+
+setInterval(updateCountdown, 1000);
+
+
+/* =========================
+   TASKS
+========================= */
+
+const taskInput =
+    document.getElementById("taskInput");
+
+const taskList =
+    document.getElementById("taskList");
+
+document.getElementById("focusTask")
+    .addEventListener("click", () => {
+        taskInput.focus();
+    });
+
+
+function addTask() {
+
+    const text = taskInput.value.trim();
+
+    if (!text) return;
+
+    data.tasks.push({
+        id: makeId(),
+        text: text,
+        date: null,
+        completed: false
+    });
+
+    taskInput.value = "";
+
+    saveData();
+    renderTasks();
+
+}
+
+document.getElementById("addTask")
+    .addEventListener("click", addTask);
+
+taskInput.addEventListener("keydown", e => {
+
+    if (e.key === "Enter") addTask();
+
+});
+
+
+/* =========================
+   TASK ORDER
+========================= */
+
+function moveTask(id, direction) {
+
+    const index = data.tasks.findIndex(
+        task => task.id === id
+    );
+
+    if (index < 0) return;
+
+    const task = data.tasks[index];
+
+    const group = data.tasks
+        .map((t, i) => ({ task: t, index: i }))
+        .filter(item => item.task.date === task.date);
+
+    const position = group.findIndex(
+        item => item.task.id === id
+    );
+
+    const nextPosition = position + direction;
+
+    if (
+        nextPosition < 0 ||
+        nextPosition >= group.length
+    ) return;
+
+    const other = group[nextPosition].task;
+
+    const otherIndex = data.tasks.findIndex(
+        t => t.id === other.id
+    );
+
+    [
+        data.tasks[index],
+        data.tasks[otherIndex]
+    ] = [
+        data.tasks[otherIndex],
+        data.tasks[index]
+    ];
+
+    saveData();
+    renderTasks();
+
+}
+
+
+/* =========================
+   TASK RENDER
+========================= */
+
+function renderTasks() {
+
+    taskList.innerHTML = "";
+
+    const today = todayKey();
+
+    const todayTasks = data.tasks.filter(
+        task => task.date === today
+    );
+
+    const normalTasks = data.tasks.filter(
+        task => !task.date
+    );
+
+    const visibleTasks = [
+        ...todayTasks,
+        ...normalTasks
+    ];
+
+    if (visibleTasks.length === 0) {
+
+        taskList.innerHTML =
+            '<div class="empty-message">No tasks yet.</div>';
+
+        return;
+
+    }
+
+    visibleTasks.forEach((task, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "task-item";
+        item.draggable = true;
+        item.dataset.id = task.id;
+
+        const handle = document.createElement("span");
+
+        handle.className = "drag-handle";
+        handle.textContent = "⠿";
+
+        const checkbox = document.createElement("input");
+
+        checkbox.type = "checkbox";
+        checkbox.className = "task-check";
+        checkbox.checked = task.completed;
+
+        const text = document.createElement("span");
+
+        text.className = "task-text";
+        text.textContent = task.text;
+
+        if (task.completed) {
+            text.classList.add("completed");
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const up = document.createElement("button");
+
+        up.className = "move-button";
+        up.textContent = "↑";
+        up.setAttribute("aria-label", "Move up");
+
+        const down = document.createElement("button");
+
+        down.className = "move-button";
+        down.textContent = "↓";
+        down.setAttribute("aria-label", "Move down");
+
+        const group = data.tasks.filter(
+            t => t.date === task.date
+        );
+
+        const position = group.findIndex(
+            t => t.id === task.id
+        );
+
+        up.disabled = position === 0;
+        down.disabled = position === group.length - 1;
+
+        up.addEventListener("click", () => {
+            moveTask(task.id, -1);
+        });
+
+        down.addEventListener("click", () => {
+            moveTask(task.id, 1);
+        });
+
+        const del = document.createElement("button");
+
+        del.className = "delete-button";
+        del.textContent = "×";
+        del.setAttribute("aria-label", "Delete task");
+
+        checkbox.addEventListener("change", () => {
+
+            task.completed = checkbox.checked;
+
+            saveData();
+            renderTasks();
+
+        });
+
+        del.addEventListener("click", () => {
+
+            data.tasks = data.tasks.filter(
+                t => t.id !== task.id
+            );
+
+            saveData();
+
+            renderTasks();
+            renderCalendar();
+            renderCalendarTasks();
+
+        });
+
+        actions.append(up, down, del);
+
+        item.append(
+            handle,
+            checkbox,
+            text,
+            actions
+        );
+
+        taskList.appendChild(item);
+
+    });
+
+    setupDragAndDrop();
+
+}
+
+
+/* =========================
+   DESKTOP DRAG & DROP
+========================= */
+
+let draggedId = null;
+
+function setupDragAndDrop() {
+
+    const items =
+        taskList.querySelectorAll(".task-item");
+
+    items.forEach(item => {
+
+        item.addEventListener("dragstart", () => {
+
+            draggedId = item.dataset.id;
+
+            item.classList.add("dragging");
+
+        });
+
+        item.addEventListener("dragend", () => {
+
+            item.classList.remove("dragging");
+
+            taskList.querySelectorAll(".task-item")
+                .forEach(el => {
+                    el.classList.remove("drag-over");
+                });
+
+        });
+
+        item.addEventListener("dragover", e => {
+
+            e.preventDefault();
+
+            item.classList.add("drag-over");
+
+        });
+
+        item.addEventListener("dragleave", () => {
+
+            item.classList.remove("drag-over");
+
+        });
+
+        item.addEventListener("drop", e => {
+
+            e.preventDefault();
+
+            item.classList.remove("drag-over");
+
+            const targetId = item.dataset.id;
+
+            if (!draggedId || draggedId === targetId) return;
+
+            const from = data.tasks.findIndex(
+                t => t.id === draggedId
+            );
+
+            const to = data.tasks.findIndex(
+                t => t.id === targetId
+            );
+
+            if (from < 0 || to < 0) return;
+
+            if (
+                data.tasks[from].date !==
+                data.tasks[to].date
+            ) return;
+
+            const [moved] = data.tasks.splice(from, 1);
+
+            data.tasks.splice(to, 0, moved);
+
+            draggedId = null;
+
+            saveData();
+            renderTasks();
+
+        });
+
+    });
+
+}
+
+
+/* =========================
+   CALENDAR
+========================= */
+
+const calendar =
+    document.getElementById("calendar");
+
+const monthTitle =
+    document.getElementById("monthTitle");
+
+const selectedDateTitle =
+    document.getElementById("selectedDateTitle");
+
+const calendarInput =
+    document.getElementById("calendarInput");
+
+const calendarTaskList =
+    document.getElementById("calendarTaskList");
+
+let currentMonth = new Date();
+
+let selectedDate = todayKey();
+
+
+function renderCalendar() {
+
+    calendar.innerHTML = "";
+
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+
+    monthTitle.textContent =
+        `${year}년 ${month + 1}월`;
+
+    const weekdays = [
+        "SUN", "MON", "TUE",
+        "WED", "THU", "FRI", "SAT"
+    ];
+
+    weekdays.forEach(day => {
+
+        const el = document.createElement("div");
+
+        el.className = "calendar-day-name";
+        el.textContent = day;
+
+        calendar.appendChild(el);
+
+    });
+
+    const firstDay = new Date(
+        year, month, 1
+    ).getDay();
+
+    const lastDate = new Date(
+        year, month + 1, 0
+    ).getDate();
+
+    const previousLastDate = new Date(
+        year, month, 0
+    ).getDate();
+
+    for (let i = 0; i < 42; i++) {
+
+        let date;
+        let dateObject;
+        let otherMonth = false;
+
+        if (i < firstDay) {
+
+            date = previousLastDate - firstDay + i + 1;
+
+            dateObject = new Date(
+                year,
+                month - 1,
+                date
+            );
+
+            otherMonth = true;
+
+        } else if (i >= firstDay + lastDate) {
+
+            date = i - firstDay - lastDate + 1;
+
+            dateObject = new Date(
+                year,
+                month + 1,
+                date
+            );
+
+            otherMonth = true;
+
+        } else {
+
+            date = i - firstDay + 1;
+
+            dateObject = new Date(
+                year,
+                month,
+                date
+            );
+
+        }
+
+        const key = dateKey(dateObject);
+
+        const button = document.createElement("button");
+
+        button.className = "calendar-date";
+        button.textContent = date;
+
+        if (key === todayKey()) {
+            button.classList.add("today");
+        }
+
+        if (key === selectedDate) {
+            button.classList.add("selected");
+        }
+
+        if (otherMonth) {
+            button.classList.add("other-month");
+        }
+
+        if (data.tasks.some(t => t.date === key)) {
+            button.classList.add("has-task");
+        }
+
+        button.addEventListener("click", () => {
+
+            selectedDate = key;
+
+            if (otherMonth) {
+
+                currentMonth = new Date(
+                    dateObject.getFullYear(),
+                    dateObject.getMonth(),
+                    1
+                );
+
+            }
+
+            renderCalendar();
+            renderCalendarTasks();
+
+        });
+
+        calendar.appendChild(button);
+
+    }
+
+}
+
+
+document.getElementById("prevMonth")
+    .addEventListener("click", () => {
+
+        currentMonth.setMonth(
+            currentMonth.getMonth() - 1
+        );
+
+        renderCalendar();
+
+    });
+
+
+document.getElementById("nextMonth")
+    .addEventListener("click", () => {
+
+        currentMonth.setMonth(
+            currentMonth.getMonth() + 1
+        );
+
+        renderCalendar();
+
+    });
+
+
+/* =========================
+   CALENDAR TASKS
+========================= */
+
+function renderCalendarTasks() {
+
+    calendarTaskList.innerHTML = "";
+
+    const [year, month, day] =
+        selectedDate.split("-");
+
+    selectedDateTitle.textContent =
+        `${year}.${month}.${day}`;
+
+    const tasks = data.tasks.filter(
+        task => task.date === selectedDate
+    );
+
+    if (tasks.length === 0) {
+
+        calendarTaskList.innerHTML =
+            '<div class="empty-message">No scheduled tasks.</div>';
+
+    }
+
+    tasks.forEach(task => {
+
+        const row = document.createElement("div");
+
+        row.className = "calendar-task";
+
+        const span = document.createElement("span");
+
+        span.textContent = task.text;
+
+        const del = document.createElement("button");
+
+        del.textContent = "×";
+        del.setAttribute("aria-label", "Delete scheduled task");
+
+        del.addEventListener("click", () => {
+
+            data.tasks = data.tasks.filter(
+                t => t.id !== task.id
+            );
+
+            saveData();
+
+            renderCalendar();
+            renderCalendarTasks();
+            renderTasks();
+
+        });
+
+        row.append(span, del);
+
+        calendarTaskList.appendChild(row);
+
+    });
+
+}
+
+
+function addCalendarTask() {
+
+    const text = calendarInput.value.trim();
+
+    if (!text) return;
+
+    data.tasks.push({
+
+        id: makeId(),
+        text: text,
+        date: selectedDate,
+        completed: false
+
+    });
+
+    calendarInput.value = "";
+
+    saveData();
+
+    renderCalendar();
+    renderCalendarTasks();
+    renderTasks();
+
+}
+
+
+document.getElementById("addCalendarTask")
+    .addEventListener("click", addCalendarTask);
+
+calendarInput.addEventListener("keydown", e => {
+
+    if (e.key === "Enter") {
+        addCalendarTask();
+    }
+
+});
+
+
+/* =========================
+   HOME SCREEN INSTALL
+========================= */
+
+let deferredPrompt = null;
+
+const installButton =
+    document.getElementById("installButton");
+
+window.addEventListener("beforeinstallprompt", e => {
+
+    e.preventDefault();
+
+    deferredPrompt = e;
+
+});
+
+installButton.addEventListener("click", async () => {
+
+    if (deferredPrompt) {
+
+        deferredPrompt.prompt();
+
+        await deferredPrompt.userChoice;
+
+        deferredPrompt = null;
+
+        return;
+
+    }
+
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+
+        alert(
+            "Safari에서 공유 버튼을 누른 후\n" +
+            "'홈 화면에 추가'를 선택하세요."
+        );
+
+        return;
+
+    }
+
+    if (navigator.share) {
+
+        try {
+
+            await navigator.share({
+                title: "DAY PLANNER",
+                url: location.href
+            });
+
+        } catch (e) {}
+
+    } else {
+
+        alert(
+            "브라우저 메뉴에서 홈 화면에 추가를 선택하세요."
+        );
 
     }
 
@@ -1182,7 +2820,35 @@ if ("serviceWorker" in navigator) {
 
         navigator.serviceWorker.register("sw.js")
             .catch(error => {
-                console.log("Service Worker registration failed:", error);
+                console.log(
+                    "Service Worker registration failed:",
+                    error
+                );
+            });
+
+    });
+
+}
+
+
+/* =========================
+   INITIAL RENDER
+========================= */
+
+renderTasks();
+renderCalendar();
+renderCalendarTasks();
+
+</script>
+
+</body>
+</html>
+")
+            .catch(error => {
+                console.log(
+                    "Service Worker registration failed:",
+                    error
+                );
             });
 
     });
