@@ -201,7 +201,7 @@
       outline: none;
       background: #080808;
       color: var(--text);
-      font-size: 16px;
+      font-size: 13px;
     }
     .task-input::placeholder { color: #626262; }
     .task-input:focus { border-color: #777; }
@@ -257,7 +257,7 @@
       flex: 1;
       min-width: 0;
       color: #dedede;
-      font-size: 16px;
+      font-size: 13px;
       line-height: 1.45;
       overflow-wrap: anywhere;
     }
@@ -507,6 +507,15 @@
       .task-form { margin: 9px 0 10px; }
       .task-row { min-height: 35px; padding: 4px 2px; }
       .bottom-note { padding-top: 10px; }
+    }
+
+    /* 모바일에서 입력창 터치 시 자동 확대 방지 */
+    @media (max-width: 760px) {
+      .task-input,
+      .calendar-input,
+      .bedtime-control input {
+        font-size: 16px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
