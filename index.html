@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale = 1.0, user-scalable = 0, viewport-fit=cover," />
   <meta name="theme-color" content="#050505" />
   <meta name="application-name" content="MY DAY" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -201,7 +201,7 @@
       outline: none;
       background: #080808;
       color: var(--text);
-      font-size: 13px;
+      font-size: 16px;
     }
     .task-input::placeholder { color: #626262; }
     .task-input:focus { border-color: #777; }
@@ -257,7 +257,7 @@
       flex: 1;
       min-width: 0;
       color: #dedede;
-      font-size: 13px;
+      font-size: 16px;
       line-height: 1.45;
       overflow-wrap: anywhere;
     }
@@ -508,16 +508,7 @@
       .task-row { min-height: 35px; padding: 4px 2px; }
       .bottom-note { padding-top: 10px; }
     }
-
-    /* 모바일에서 입력창 터치 시 자동 확대 방지 */
-    @media (max-width: 760px) {
-      .task-input,
-      .calendar-input,
-      .bedtime-control input {
-        font-size: 16px;
-      }
-    }
-
+    
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition-duration: .01ms !important; }
     }
